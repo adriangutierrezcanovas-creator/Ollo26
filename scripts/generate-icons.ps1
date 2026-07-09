@@ -1,6 +1,6 @@
 Add-Type -AssemblyName System.Drawing
 
-function New-AppIcon {
+function New-OlloIcon {
     param(
         [int]$Size,
         [string]$OutPath,
@@ -10,50 +10,62 @@ function New-AppIcon {
     $bmp = New-Object System.Drawing.Bitmap($Size, $Size)
     $g = [System.Drawing.Graphics]::FromImage($bmp)
     $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+    $g.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::AntiAliasGridFit
 
-    $bgColor = [System.Drawing.Color]::FromArgb(255, 217, 119, 87)   # Claude coral/terracota
+    $bgColor = [System.Drawing.Color]::FromArgb(255, 217, 119, 87)   # coral de la app
     $g.Clear($bgColor)
 
-    # Safe zone padding for maskable icons (~10% each side)
-    $pad = if ($Maskable) { [int]($Size * 0.12) } else { [int]($Size * 0.04) }
-    $w = $Size - ($pad * 2)
-    $h = $Size - ($pad * 2)
+    # Zona segura más amplia para iconos "maskable" (los sistemas recortan un círculo/redondeado).
+    $pad = if ($Maskable) { [double]$Size * 0.18 } else { [double]$Size * 0.14 }
+    $contentW = [double]$Size - ($pad * 2)
+    $contentH = [double]$Size - ($pad * 2)
 
-    # Sun
-    $sunColor = [System.Drawing.Color]::FromArgb(255, 245, 199, 84)
-    $sunBrush = New-Object System.Drawing.SolidBrush($sunColor)
-    $sunSize = [int]($w * 0.28)
-    $sunX = $pad + [int]($w * 0.62)
-    $sunY = $pad + [int]($h * 0.12)
-    $g.FillEllipse($sunBrush, $sunX, $sunY, $sunSize, $sunSize)
+    $fontFamily = "Segoe UI"
+    $bigSize = $contentH * 0.62      # altura aprox. de las L (montañas)
+    $smallSize = $contentH * 0.34    # altura aprox. de las O (valles)
 
-    # Mountain (two overlapping triangles)
-    $mtnColor = [System.Drawing.Color]::FromArgb(255, 255, 255, 255)
-    $mtnBrush = New-Object System.Drawing.SolidBrush($mtnColor)
+    $fontBig = New-Object System.Drawing.Font($fontFamily, $bigSize, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
+    $fontSmall = New-Object System.Drawing.Font($fontFamily, $smallSize, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
+    $brush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::White)
 
-    $baseY = $pad + [int]($h * 0.78)
-    $p1 = New-Object System.Drawing.Point(($pad + [int]($w * 0.08)), $baseY)
-    $p2 = New-Object System.Drawing.Point(($pad + [int]($w * 0.42)), ($pad + [int]($h * 0.32)))
-    $p3 = New-Object System.Drawing.Point(($pad + [int]($w * 0.66)), ($pad + [int]($h * 0.58)))
-    $g.FillPolygon($mtnBrush, @($p1, $p2, $p3, (New-Object System.Drawing.Point(($pad + [int]($w*0.08)), $baseY))))
+    $letters = @(
+        @{ Char = "O"; Font = $fontSmall },
+        @{ Char = "L"; Font = $fontBig },
+        @{ Char = "L"; Font = $fontBig },
+        @{ Char = "O"; Font = $fontSmall }
+    )
 
-    $mtn2Color = [System.Drawing.Color]::FromArgb(255, 245, 228, 216)
-    $mtn2Brush = New-Object System.Drawing.SolidBrush($mtn2Color)
-    $q1 = New-Object System.Drawing.Point(($pad + [int]($w * 0.38)), $baseY)
-    $q2 = New-Object System.Drawing.Point(($pad + [int]($w * 0.68)), ($pad + [int]($h * 0.22)))
-    $q3 = New-Object System.Drawing.Point(($pad + [int]($w * 0.95)), $baseY)
-    $g.FillPolygon($mtn2Brush, @($q1, $q2, $q3))
+    $spacing = $Size * 0.012
+    $sizes = @()
+    $totalW = 0.0
+    foreach ($l in $letters) {
+        $sz = $g.MeasureString($l.Char, $l.Font, 9999, [System.Drawing.StringFormat]::GenericTypographic)
+        $sizes += $sz
+        $totalW += $sz.Width
+    }
+    $totalW += $spacing * ($letters.Count - 1)
+
+    $baselineY = $pad + $contentH * 0.86   # línea base compartida (todas las letras se apoyan aquí)
+    $x = $pad + ($contentW - $totalW) / 2.0
+
+    for ($i = 0; $i -lt $letters.Count; $i++) {
+        $l = $letters[$i]
+        $sz = $sizes[$i]
+        $y = $baselineY - $sz.Height
+        $g.DrawString($l.Char, $l.Font, $brush, [single]$x, [single]$y, [System.Drawing.StringFormat]::GenericTypographic)
+        $x += $sz.Width + $spacing
+    }
 
     $bmp.Save($OutPath, [System.Drawing.Imaging.ImageFormat]::Png)
-    $g.Dispose()
-    $bmp.Dispose()
+    $fontBig.Dispose(); $fontSmall.Dispose(); $brush.Dispose()
+    $g.Dispose(); $bmp.Dispose()
 }
 
 $iconDir = "E:\APP VIAJE\App_Viaje\assets\icons"
-New-AppIcon -Size 192 -OutPath "$iconDir\icon-192.png" -Maskable $false
-New-AppIcon -Size 512 -OutPath "$iconDir\icon-512.png" -Maskable $false
-New-AppIcon -Size 192 -OutPath "$iconDir\icon-192-maskable.png" -Maskable $true
-New-AppIcon -Size 512 -OutPath "$iconDir\icon-512-maskable.png" -Maskable $true
-New-AppIcon -Size 32 -OutPath "$iconDir\favicon-32.png" -Maskable $false
+New-OlloIcon -Size 192 -OutPath "$iconDir\icon-192.png" -Maskable $false
+New-OlloIcon -Size 512 -OutPath "$iconDir\icon-512.png" -Maskable $false
+New-OlloIcon -Size 192 -OutPath "$iconDir\icon-192-maskable.png" -Maskable $true
+New-OlloIcon -Size 512 -OutPath "$iconDir\icon-512-maskable.png" -Maskable $true
+New-OlloIcon -Size 32 -OutPath "$iconDir\favicon-32.png" -Maskable $false
 
 Write-Output "Icons generated in $iconDir"

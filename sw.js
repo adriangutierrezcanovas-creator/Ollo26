@@ -1,4 +1,4 @@
-const CACHE_NAME = "viaje-pamplona-v19";
+const CACHE_NAME = "viaje-pamplona-v20";
 
 const SHELL_FILES = [
   "./",
