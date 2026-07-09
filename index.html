@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Viaje a Pamplona</title>
+  <meta name="description" content="App familiar para el viaje a Pamplona, 3-11 de agosto" />
+  <meta name="theme-color" content="#f5f4ee" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <button id="hamburger-btn" class="icon-btn" aria-label="Abrir menú">☰</button>
+      <h1 id="topbar-title">Home</h1>
+    </header>
+
+    <div id="drawer-backdrop" class="drawer-backdrop"></div>
+    <nav id="drawer" class="drawer">
+      <div id="drawer-nav" class="drawer-nav"></div>
+      <button id="change-profile-btn" class="drawer-footer-btn">🔁 Cambiar perfil</button>
+    </nav>
+
+    <main id="view-root" class="view-root"></main>
+
+    <button id="maps-fab" class="maps-fab" aria-label="Cómo llegar a la casa">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="white" aria-hidden="true">
+        <path d="M12 2.7 2 11h3v10h6v-6h2v6h6V11h3z" />
+      </svg>
+    </button>
+
+    <div id="profile-modal" class="profile-modal"></div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/views/home.js"></script>
+  <script src="js/views/calendario.js"></script>
+  <script src="js/views/actividades.js"></script>
+  <script src="js/views/restaurantes.js"></script>
+  <script src="js/views/compra.js"></script>
+  <script src="js/views/equipaje.js"></script>
+  <script src="js/views/gastos.js"></script>
+  <script src="js/views/info.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
