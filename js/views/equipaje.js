@@ -23,9 +23,16 @@ function renderEquipaje(root) {
     ? `<ul class="compra-list">${items.map(equipajeItemHTML).join("")}</ul>`
     : `<p class="muted">Lista vacía.</p>`;
 
+  const clearBtnHTML = items.length
+    ? `<button id="equipaje-clear-btn" class="clear-btn">Vaciar lista</button>`
+    : "";
+
   root.innerHTML = `
     <section class="card">
-      <h2>Equipaje de ${profile.label}</h2>
+      <div class="card-header-row">
+        <h2>Equipaje de ${profile.label}</h2>
+        ${clearBtnHTML}
+      </div>
       <p class="muted">Solo tú ves esta lista, no se comparte con el resto.</p>
       <form id="equipaje-add-form" class="compra-add-form">
         <input type="text" id="equipaje-input" placeholder="Añadir a la maleta…" autocomplete="off" />
@@ -45,6 +52,16 @@ function renderEquipaje(root) {
     Storage.set(key, current);
     renderEquipaje(root);
   });
+
+  const clearBtn = document.getElementById("equipaje-clear-btn");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      if (confirm("¿Vaciar toda tu lista de equipaje?")) {
+        Storage.set(key, []);
+        renderEquipaje(root);
+      }
+    });
+  }
 
   root.querySelectorAll(".compra-item").forEach((li) => {
     const id = li.dataset.id;

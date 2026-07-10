@@ -30,9 +30,16 @@ function renderCompra(root) {
     ? `<ul class="compra-list">${items.map((i) => compraItemHTML(i, isAdmin)).join("")}</ul>`
     : `<p class="muted">Lista vacía.</p>`;
 
+  const clearBtnHTML = isAdmin && items.length
+    ? `<button id="compra-clear-btn" class="clear-btn">Vaciar lista</button>`
+    : "";
+
   root.innerHTML = `
     <section class="card">
-      <h2>Lista de la compra</h2>
+      <div class="card-header-row">
+        <h2>Lista de la compra</h2>
+        ${clearBtnHTML}
+      </div>
       ${addFormHTML}
       ${listHTML}
     </section>
@@ -51,6 +58,16 @@ function renderCompra(root) {
     Storage.set(COMPRA_KEY, current);
     renderCompra(root);
   });
+
+  const clearBtn = document.getElementById("compra-clear-btn");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      if (confirm("¿Vaciar toda la lista de la compra?")) {
+        Storage.set(COMPRA_KEY, []);
+        renderCompra(root);
+      }
+    });
+  }
 
   root.querySelectorAll(".compra-item").forEach((li) => {
     const id = li.dataset.id;
