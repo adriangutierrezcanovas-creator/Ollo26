@@ -133,6 +133,20 @@ const ACTIVITIES = [
     longDesc: "Circuitos de arborismo con distintos niveles según edad; adultos y niños hacen la misma actividad. Mantenida como excepción pese a superar los 35 min habituales.",
     photo: "assets/actividades/Realistic-photo-of-a-zipline-cable-stretching-between-tall-pine-trees-in-a-fores.jpg",
   },
+  {
+    id: "cueva-mendukilo",
+    zone: "Sierra de Aralar",
+    name: "Cueva de Mendukilo (Astiz)",
+    distance: "~12km / 20-25 min",
+    price: "9€ adultos / 7€ niños (4-10 años) / gratis menores de 3 años",
+    reservation: "Sí, obligatoria (grupos limitados, reservar por teléfono o web con antelación)",
+    kidFriendly: true,
+    type: "Naturaleza / cultural",
+    shortDesc: "Visita guiada por una cueva subterránea con pasarelas",
+    longDesc: "Visita guiada de una hora por la Cueva de Mendukilo, recorrido de 540m con pasarela flotante que desciende 40m bajo tierra, visitando tres salas con estalactitas, estalagmitas y formaciones kársticas. La temperatura interior es de 8-9ºC con humedad, así que hace falta ropa de abrigo y calzado cómodo. Muy valorada por familias, guías especialmente atentas con niños pequeños. Reserva obligatoria, grupos limitados.",
+    photo: "assets/actividades/mendukilo.jpg",
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=42.973906,-1.8968941",
+  },
 ];
 
 const RESTAURANTS = [
@@ -202,4 +216,4 @@ const RESTAURANTS = [
 ];
 
 RESTAURANTS.forEach((r) => { r.mapsUrl = mapsUrlFor(r.name, r.zone); });
-ACTIVITIES.forEach((a) => { a.mapsUrl = mapsUrlFor(a.name, a.zone); });
+ACTIVITIES.forEach((a) => { if (!a.mapsUrl) a.mapsUrl = mapsUrlFor(a.name, a.zone); });
